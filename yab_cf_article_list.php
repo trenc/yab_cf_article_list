@@ -257,10 +257,10 @@ This plugin is released under the GNU General Public License Version 2 and above
 
 h2(#help-section12). Author contact
 
-* "Plugin on author's site":http://www.yablo.de/
+* "Plugin on author's site":http://www.yablo.de/article/482/yab_cf_article_list-list-and-search-a-custom_field-in-admin-article-list
 * "Plugin on GitHub":https://github.com/trenc/yab_cf_article_list
-* "Plugin on textpattern forum":http://forum.textpattern.com/
-* "Plugin on textpattern.org":http://textpattern.org/
+* "Plugin on textpattern forum":http://forum.textpattern.com/viewtopic.php?id=40971
+* "Plugin on textpattern.org":http://textpattern.org/plugins/1292/yab_cf_article_list
 # --- END PLUGIN HELP ---
 -->
 <?php

@@ -1,0 +1,49 @@
+h1. yab_cf_article_list
+
+p. List a custom_field in admin article list and search article list for this custom field.
+
+p. *Version:* 0.1
+
+h2. Table of contents
+
+# "Plugin requirements":#help-section02
+# "Configuration":#help-config03
+# "Changelog":#help-section10
+# "License":#help-section11
+# "Author contact":#help-section12
+
+h2(#help-section02). Plugin requirements
+
+Minimum requirements:
+
+* Textpattern 4.4.x
+
+h2(#help-config03). Configuration
+
+Install and activate the plugin.
+
+The function yab_cfal_config() in the plugin code contains an array with some config values:
+
+@'custom_field'@: Number of the custom field
+Default: 1
+
+@'name_for_list'@: Name of the custom field in the table head and in article search.
+Default: empty (The given name for this custom field will be shown.)
+
+h2(#help-section10). Changelog
+
+* v0.1: 2014-05-06
+** initial release
+
+h2(#help-section11). Licence
+
+This plugin is released under the GNU General Public License Version 2 and above
+* Version 2: "http://www.gnu.org/licenses/gpl-2.0.html":http://www.gnu.org/licenses/gpl-2.0.html
+* Version 3: "http://www.gnu.org/licenses/gpl-3.0.html":http://www.gnu.org/licenses/gpl-3.0.html
+
+h2(#help-section12). Author contact
+
+* "Plugin on author's site":http://www.yablo.de/
+* "Plugin on GitHub":https://github.com/trenc/yab_cf_article_list
+* "Plugin on textpattern forum":http://forum.textpattern.com/
+* "Plugin on textpattern.org":http://textpattern.org/

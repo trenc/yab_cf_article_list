@@ -227,7 +227,7 @@ h2(#help-section10). Changelog
 * v0.1: 2014-05-06
 ** initial release
 * v0.2: 2017-02-18
-* ** bugfix: TXP 4.6.ready (required)
+** bugfix: TXP 4.6.ready (required)
 
 h2(#help-section11). Licence
 

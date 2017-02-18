@@ -2,7 +2,7 @@
 
 $plugin['name'] = 'yab_cf_article_list';
 $plugin['allow_html_help'] = 0;
-$plugin['version'] = '0.1';
+$plugin['version'] = '0.2';
 $plugin['author'] = 'Tommy Schmucker';
 $plugin['author_uri'] = 'http://www.yablo.de/';
 $plugin['description'] = 'List a custom_field in admin article list';
@@ -58,8 +58,8 @@ if (@txpinterface == 'admin')
 
 	register_callback(
 		'yab_cfal_search',
-		'admin_criteria',
-		'list_list'
+		'search_criteria',
+		'list'
 	);
 
 	// our AJAX endpoint
@@ -75,27 +75,25 @@ if (@txpinterface == 'admin')
 	}
 }
 
-
 /**
- * Search by our custom field
+ * Enhance the search method with custom field criteria
  * Adminside Textpattern callback function
- * Hooked in the list_list search and extends the search $criteria
+ * Hooked in the search_criteria in article list
  *
  * @return void
  */
-function yab_cfal_search()
+function yab_cfal_search($event, $step, &$data, &$rs)
 {
-	$cf = 'custom_'.yab_cfal_config('custom_field');
+	$cf   = 'custom_'.yab_cfal_config('custom_field');
+	$name = yab_cfal_config('name_for_list');
 
-	$method = gps('search_method');
-	$crit   = gps('crit');
+	$crit = array(
+		'column'  => array('textpattern.'.$cf),
+		'label'   => $name,
+		'options' => array('case_sensitive' => true)
+	);
 
-	if ($method === $cf and $crit != '')
-	{
-		$verbatim = preg_match('/^"(.*)"$/', $crit, $m);
-		$crit_escaped = doSlash($verbatim ? $m[1] : str_replace(array('\\','%','_','\''), array('\\\\','\\%','\\_', '\\\''), $crit));
-		return " AND $cf LIKE '%$crit_escaped%'";
-	}
+	$data[$cf] = $crit;
 }
 
 /**
@@ -109,45 +107,25 @@ function yab_cfal_js()
 {
 	global $event;
 
-	$ajax_uri = hu.'textpattern/?yab_cfal_ajax=1';
-	$name     = yab_cfal_config('name_for_list');
-	$cf       = yab_cfal_config('custom_field');
-	$method   = gps('search_method');
-	$crit     = gps('crit');
-	$verbatim = preg_match('/^"(.*)"$/', $crit, $m);
-	$crit_escaped = doSlash($verbatim ? $m[1] : str_replace(array('\\','%','_','\''), array('\\\\','\\%','\\_', '\\\''), $crit));
-
 	// be sure we are article list area
 	if ($event != 'list')
 	{
 		return false;
 	}
 
-	$thead = yab_cfal_config('name_for_list');
+	$ajax_uri = hu.'textpattern/?yab_cfal_ajax=1';
+	$thead    = yab_cfal_config('name_for_list');
+
 	$js     = <<<EOF
 <script>
 (function() {
 
-	var method = '$method';
-	var selected = '';
-	var crit     = '$crit_escaped';
-
-	if (method == 'custom_$cf')
-	{
-		selected = ' selected="selected"';
-		$('option:selected', '#list-search').removeAttr('selected');
-		$('.input-medium').val(crit);
-	}
-
-	var option = '<option value="custom_$cf"' + selected + '>$name</option>';
-	$('option:first-child', '#list-search').after(option);
-
-	var th = '<th class="custom_field">$thead</th>';
-	$('th.id').after(th);
+	var th = '<th class="txp-list-col-cf" scope="col">$thead</th>';
+	$('th.txp-list-col-id', 'thead').after(th);
 
 	// get ids
 	var ids = [];
-	var tdid = $('td.id', '.txp-list tr');
+	var tdid = $('th.txp-list-col-id', '.txp-list tr');
 
 	tdid.each(function() {
 		var article_id = $(this).children('a').text();
@@ -216,7 +194,7 @@ h1. yab_cf_article_list
 
 p. List a custom_field in admin article list and search article list for this custom field.
 
-p. *Version:* 0.1
+p. *Version:* 0.2
 
 h2. Table of contents
 
@@ -230,7 +208,7 @@ h2(#help-section02). Plugin requirements
 
 Minimum requirements:
 
-* Textpattern 4.4.x
+* Textpattern 4.6.2
 
 h2(#help-config03). Configuration
 
@@ -248,6 +226,8 @@ h2(#help-section10). Changelog
 
 * v0.1: 2014-05-06
 ** initial release
+* v0.2: 2017-02-18
+* ** bugfix: TXP 4.6.ready (required)
 
 h2(#help-section11). Licence
 

@@ -1,23 +1,74 @@
 <?php
 
+// This is a PLUGIN TEMPLATE for Textpattern CMS.
+
+// Copy this file to a new name like abc_myplugin.php.  Edit the code, then
+// run this file at the command line to produce a plugin for distribution:
+// $ php abc_myplugin.php > abc_myplugin-0.1.txt
+
+// Plugin name is optional.  If unset, it will be extracted from the current
+// file name. Plugin names should start with a three letter prefix which is
+// unique and reserved for each plugin author ("abc" is just an example).
+// Uncomment and edit this line to override:
 $plugin['name'] = 'yab_cf_article_list';
-$plugin['allow_html_help'] = 0;
-$plugin['version'] = '0.2';
+
+// Allow raw HTML help, as opposed to Textile.
+// 0 = Plugin help is in Textile format, no raw HTML allowed (default).
+// 1 = Plugin help is in raw HTML.  Not recommended.
+# $plugin['allow_html_help'] = 1;
+
+$plugin['version'] = '0.3.0';
 $plugin['author'] = 'Tommy Schmucker';
 $plugin['author_uri'] = 'http://www.yablo.de/';
 $plugin['description'] = 'List a custom_field in admin article list';
+
+// Plugin load order:
+// The default value of 5 would fit most plugins, while for instance comment
+// spam evaluators or URL redirectors would probably want to run earlier
+// (1...4) to prepare the environment for everything else that follows.
+// Values 6...9 should be considered for plugins which would work late.
+// This order is user-overrideable.
 $plugin['order'] = '5';
+
+// Plugin 'type' defines where the plugin is loaded
+// 0 = public              : only on the public side of the website (default)
+// 1 = public+admin        : on both the public and admin side
+// 2 = library             : only when include_plugin() or require_plugin() is called
+// 3 = admin               : only on the admin side (no AJAX)
+// 4 = admin+ajax          : only on the admin side (AJAX supported)
+// 5 = public+admin+ajax   : on both the public and admin side (AJAX supported)
 $plugin['type'] = '3';
 
-if (!defined('PLUGIN_HAS_PREFS')) define('PLUGIN_HAS_PREFS', 0x0001);
-if (!defined('PLUGIN_LIFECYCLE_NOTIFY')) define('PLUGIN_LIFECYCLE_NOTIFY', 0x0002);
+// Plugin "flags" signal the presence of optional capabilities to the core plugin loader.
+// Use an appropriately OR-ed combination of these flags.
+// The four high-order bits 0xf000 are available for this plugin's private use
+if (!defined('PLUGIN_HAS_PREFS')) define('PLUGIN_HAS_PREFS', 0x0001); // This plugin wants to receive "plugin_prefs.{$plugin['name']}" events
+if (!defined('PLUGIN_LIFECYCLE_NOTIFY')) define('PLUGIN_LIFECYCLE_NOTIFY', 0x0002); // This plugin wants to receive "plugin_lifecycle.{$plugin['name']}" events
 
 $plugin['flags'] = '';
 
+// Plugin 'textpack' is optional. It provides i18n strings to be used in conjunction with gTxt().
+// Syntax:
+// ## arbitrary comment
+// #@event
+// #@language ISO-LANGUAGE-CODE
+// abc_string_name => Localized String
+
+/** Uncomment me, if you need a textpack
+$plugin['textpack'] = <<< EOT
+#@admin
+#@language en-gb
+abc_sample_string => Sample String
+abc_one_more => One more
+#@language de-de
+abc_sample_string => Beispieltext
+abc_one_more => Noch einer
+EOT;
+**/
+// End of textpack
+
 if (!defined('txpinterface'))
-{
-	@include_once('zem_tpl.php');
-}
+        @include_once('zem_tpl.php');
 
 # --- BEGIN PLUGIN CODE ---
 /**
@@ -41,7 +92,7 @@ function yab_cfal_config($name)
 	// get default name of custom field
 	if (!$config['name_for_list'])
 	{
-		$config['name_for_list'] = @$prefs['custom_1_set'];
+		$config['name_for_list'] = @$prefs['custom_'.$config['custom_field'].'_set'];
 	}
 
 	return $config[$name];
@@ -120,12 +171,12 @@ function yab_cfal_js()
 <script>
 (function() {
 
-	var th = '<th class="txp-list-col-cf" scope="col">$thead</th>';
+	var th = '<th class="txp-list-col-cf" data-col="cf" scope="col">$thead</th>';
 	$('th.txp-list-col-id', 'thead').after(th);
 
 	// get ids
 	var ids = [];
-	var tdid = $('th.txp-list-col-id', '.txp-list tr');
+	var tdid = $('th', 'tbody tr');
 
 	tdid.each(function() {
 		var article_id = $(this).children('a').text();
@@ -147,7 +198,7 @@ function yab_cfal_js()
 					$.each(data, function(i) {
 						if (data[i].id == this_id) {
 							var this_cf = data[i].cf;
-							$(that).after('<td class="custom_field">' + this_cf + '</td>');
+							$(that).after('<td class="txp-list-col-cf">' + this_cf + '</td>');
 						}
 					});
 				});
@@ -184,7 +235,6 @@ function yab_cfal_ajax($ids)
 
 	return $json;
 }
-
 # --- END PLUGIN CODE ---
 if (0) {
 ?>
@@ -208,7 +258,7 @@ h2(#help-section02). Plugin requirements
 
 Minimum requirements:
 
-* Textpattern 4.6.2
+* Textpattern 4.7.1
 
 h2(#help-config03). Configuration
 
@@ -228,6 +278,10 @@ h2(#help-section10). Changelog
 ** initial release
 * v0.2: 2017-02-18
 ** bugfix: TXP 4.6.ready (required)
+* v0.3.0: 2019-03-04
+** bugfix: TXP 4.7.1-ready
+** bugfix: default config title ow correctly received by given custom_field
+** modified: changed to semver versioning
 
 h2(#help-section11). Licence
 

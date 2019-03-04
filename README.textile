@@ -2,7 +2,7 @@ h1. yab_cf_article_list
 
 p. List a custom_field in admin article list and search article list for this custom field.
 
-p. *Version:* 0.2
+p. *Version:* 0.3.0
 
 h2. Table of contents
 
@@ -16,7 +16,7 @@ h2(#help-section02). Plugin requirements
 
 Minimum requirements:
 
-* Textpattern 4.6.x
+* Textpattern 4.7.1
 
 h2(#help-config03). Configuration
 
@@ -36,6 +36,10 @@ h2(#help-section10). Changelog
 ** initial release
 * v0.2: 2017-02-18
 ** bugfix: TXP 4.6.ready (required)
+* v0.3.0: 2019-03-04
+** bugfix: TXP 4.7.1-ready (required)
+** bugfix: default config title ow correctly received by given custom_field
+** modified: changed to semver versioning
 
 h2(#help-section11). Licence
 
